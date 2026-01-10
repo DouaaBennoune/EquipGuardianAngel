@@ -1,1 +1,1 @@
-# PredictiveMaintenance-RUL-AutoML
+# Equip GuardianAngel
