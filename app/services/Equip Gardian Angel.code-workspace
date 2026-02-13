@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "Equip Gardian Angel",
+			"path": "../.."
+		},
+		{
+			"path": "../../../DeepLearning/LSTTM-FNN"
+		}
+	],
+	"settings": {}
+}
