@@ -1,5 +1,5 @@
 """
-PredMaint Hub - Professional Frontend
+Equip-GuardianAngel - Professional Frontend
 Connects to FastAPI Backend
 """
 
@@ -8,13 +8,15 @@ import pandas as pd
 import requests
 import plotly.express as px
 from datetime import datetime
+import os
 
 # ========================= Configuration =========================
 
-API_URL = "http://localhost:8000/api/v1/predict"
+API_URL = os.getenv("API_URL", "http://host.docker.internal:8000/api/v1/predict")
+
 
 st.set_page_config(
-    page_title="PredMaint Hub",
+    page_title="Equip-GuardianAngel",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed" # Cleaner look
@@ -26,12 +28,12 @@ st.markdown("""
     <style>
         /* Background and general styling */
         .main {
-            background-color: #0f172a;
+            background-color: #0a101d;
             color: #e2e8f0;
         }
         
         .stApp {
-            background-color: #0f172a;
+            background-color: #0a101d;
         }
         
         /* Metric styling */
@@ -62,21 +64,32 @@ st.markdown("""
         }
         
         /* Button styling */
-        .stButton > button {
-            background: linear-gradient(90deg, #06b6d4 0%, #0891b2 100%);
-            color: white;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            width: 100%;
-            transition: all 0.3s;
-        }
-        
-        .stButton > button:hover {
-            background: linear-gradient(90deg, #0891b2 0%, #0e7490 100%);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-        }
+.stButton > button {
+    background: #080d18;
+    color: #49576b;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.stButton > button:hover {
+    background: #191f2e !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Streamlit also wraps text in a <p> inside the button */
+.stButton > button:hover p {
+    color: #ffffff !important;
+}
+
+/* And sometimes in a span */
+.stButton > button:hover span {
+    color: #ffffff !important;
+}
         
         /* Text Colors */
         h1, h2, h3 { color: #f1f5f9; }
@@ -86,8 +99,37 @@ st.markdown("""
         [data-testid="stDataFrame"] {
             background-color: #1e293b;
         }
+/* Prevent nav from collapsing below readable width */
+.nav-bar {
+    min-width: 600px;
+    overflow-x: auto;
+}
+
+/* Remove Streamlit's default column padding on nav */
+.nav-bar [data-testid="column"] {
+    padding: 0 4px !important;
+}
+            
+
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+    /* Force all nav buttons to same size, no wrapping */
+    .nav-bar .stButton > button {
+        white-space: nowrap !important;
+        min-width: 100px !important;
+        width: 100% !important;
+        height: 40px !important;
+        padding: 0 16px !important;
+        font-size: 14px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
 
 # ========================= Session State =========================
 
@@ -103,8 +145,12 @@ if 'selected_status' not in st.session_state:
 def process_csv_via_api(uploaded_file):
     """Sends CSV to FastAPI and gets Real Predictions"""
     try:
-        files = {"file": uploaded_file}
-        # Send POST request to backend
+        # CRITICAL: Read file into bytes first (Streamlit reruns invalidate file objects)
+        file_bytes = uploaded_file.read()
+        uploaded_file.seek(0)  # Reset for potential re-reads
+        
+        # Send POST request to backend with bytes
+        files = {'file': (uploaded_file.name, file_bytes, 'text/csv')}
         response = requests.post(API_URL, files=files)
         
         if response.status_code == 200:
@@ -123,20 +169,27 @@ def process_csv_via_api(uploaded_file):
 
 # ========================= Navigation Bar =========================
 
-col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 1])
+# Wrap the whole nav in a container
+st.markdown('<div class="nav-bar">', unsafe_allow_html=True)
+
+col1, col2, col3, col4, col5 = st.columns([2.5, 1, 1, 1, 1])
 
 with col1:
-    st.markdown("### ⚡ PredMaint Hub")
-
+    st.markdown("### ⚡ Equip-GuardianAngel")
 with col2:
-    if st.button("🏠 Home"): st.session_state.current_page = 'home'; st.rerun()
+    if st.button("🏠 Home", use_container_width=True): 
+        st.session_state.current_page = 'home'; st.rerun()
 with col3:
-    if st.button("📊 Dashboard"): st.session_state.current_page = 'dashboard'; st.rerun()
+    if st.button("📊 Dashboard", use_container_width=True): 
+        st.session_state.current_page = 'dashboard'; st.rerun()
 with col4:
-    if st.button("📤 Upload"): st.session_state.current_page = 'upload'; st.rerun()
+    if st.button("📤 Upload", use_container_width=True): 
+        st.session_state.current_page = 'upload'; st.rerun()
 with col5:
-    if st.button("📖 Docs"): st.session_state.current_page = 'docs'; st.rerun()
+    if st.button("📖 Docs", use_container_width=True): 
+        st.session_state.current_page = 'docs'; st.rerun()
 
+st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
 
 # ========================= PAGE: HOME =========================
@@ -145,7 +198,7 @@ if st.session_state.current_page == 'home':
     # Hero Section
     st.markdown("""
         <div style="text-align: center; padding: 60px 20px;">
-            <p style="font-size: 16px; color: #06b6d4; font-weight: bold; margin-bottom: 10px;">
+            <p style="font-size: 16px; color: #10a9e8; font-weight: bold; margin-bottom: 10px;">
                 AI-POWERED RELIABILITY
             </p>
             <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 20px; line-height: 1.1;">
@@ -159,7 +212,7 @@ if st.session_state.current_page == 'home':
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🚀 Start Analysis Now", use_container_width=True):
+        if st.button("Start Analysis Now", use_container_width=True):
             st.session_state.current_page = 'upload'
             st.rerun()
 
@@ -171,25 +224,38 @@ if st.session_state.current_page == 'home':
     
     with c1:
         st.markdown("""
-        <div style="background: #1e293b; padding: 25px; border-radius: 12px; height: 100%;">
-            <h3 style="color: #38bdf8;">📊 Real-Time RUL</h3>
-            <p>Precise cycle estimations using CNN & Transformer architectures trained on CMAPSS data.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    <div style="background: #0d1626; padding: 25px; border-radius: 12px; 
+                border: 1px solid #1e3a5f; height: 100%;">
+        <div style="background: #0e3d4a; width: 48px; height: 48px; border-radius: 10px;
+                    display: flex; align-items: center; justify-content: center; 
+                    font-size: 22px; margin-bottom: 18px;">📊</div>
+        <h3 style="color: #f1f5f9; font-size: 18px; margin-bottom: 10px;">Real-Time RUL</h3>
+        <p style="color: #64748b;">Precise cycle estimations using RF model trained on CMAPSS data.</p>
+    </div>
+    """, unsafe_allow_html=True)
     with c2:
         st.markdown("""
-        <div style="background: #1e293b; padding: 25px; border-radius: 12px; height: 100%;">
-            <h3 style="color: #38bdf8;">🛡️ Risk Classification</h3>
-            <p>Automatic categorization into Healthy, Warning, and Critical states for prioritization.</p>
-        </div>
-        """, unsafe_allow_html=True)
+    <div style="background: #0d1626; padding: 25px; border-radius: 12px; 
+                border: 1px solid #1e3a5f; height: 100%;">
+        <div style="background: #0e3d4a; width: 48px; height: 48px; border-radius: 10px;
+                    display: flex; align-items: center; justify-content: center; 
+                    font-size: 22px; margin-bottom: 18px;">🛡️</div>
+        <h3 style="color: #f1f5f9; font-size: 18px; margin-bottom: 10px;">Risk Classification</h3>
+        <p style="color: #64748b;">Automatic categorization into Healthy, Warning, and Critical states for prioritization.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
     with c3:
         st.markdown("""
-        <div style="background: #1e293b; padding: 25px; border-radius: 12px; height: 100%;">
-            <h3 style="color: #38bdf8;">📉 Trend Analysis</h3>
-            <p>Visualize degradation patterns across your entire equipment fleet instantly.</p>
-        </div>
-        """, unsafe_allow_html=True)
+<div style="background: #0d1626;padding:25px; border-radius:12px;
+                    border: 1px solid #1e3a5f; height: 100%;">
+<div style="background: #0e3d4a; width: 48px;height: 48px; border-radius: 10px;
+                    display: flex; align-items: center; justify-content: center; 
+                    font-size: 22px; margin-bottom: 18px;">📉</div>
+                    <h3 style="color: #f1f5f9; font-size: 18px; margin-bottom: 10px;">Trend Analysis</h3>
+        <p style="color: #64748b;">Visualize degradation patterns across your entire equipment fleet instantly.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ========================= PAGE: UPLOAD =========================
 
@@ -226,67 +292,71 @@ elif st.session_state.current_page == 'upload':
         **Format:** CSV or TXT
         
         **Columns Required:**
-        - `id` (Equipment Identifier)
-        - `s2`, `s3`... (Sensor Readings)
+        - 'id','cycle' (Equipment Identifier)
+        - 'setting1', 'setting2', 'sensor_2', 'sensor_3', 'sensor_4', 
+        'sensor_7', 'sensor_8', 'sensor_9', 'sensor_11', 'sensor_12', 
+        'sensor_13', 'sensor_14', 'sensor_15', 'sensor_17', 'sensor_20', 'sensor_21'(Sensor Readings)
         """)
         st.markdown("Your data is processed securely and is never stored permanently on our servers.")
 
 # ========================= PAGE: DASHBOARD =========================
 
 elif st.session_state.current_page == 'dashboard':
-    
-    # 1. Check if we have data
+
     if not st.session_state.predictions:
         st.warning("⚠️ No data loaded. Please upload a file first.")
         if st.button("Go to Upload"):
             st.session_state.current_page = 'upload'
             st.rerun()
-    
+
     else:
         # 2. Parse Data
         api_data = st.session_state.predictions
         df_pred = pd.DataFrame(api_data['equipment'])
-        
-        # 3. KPI Header
+
+        # 3. KPI Cards
+        def metric_card(icon, title, count, subtitle, border_color, number_color, key):
+            st.markdown(f"""
+                <div style="
+                    background: #0d1117;
+                    border: 1.5px solid {border_color};
+                    border-radius: 12px;
+                    padding: 24px 28px;
+                ">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                        <span style="font-size: 18px;">{icon}</span>
+                        <span style="color: #94a3b8; font-size: 15px; font-weight: 500;">{title}</span>
+                    </div>
+                    <div style="font-size: 52px; font-weight: 700; color: {number_color};
+                                line-height: 1; margin-bottom: 14px;">{count}</div>
+                    <div style="color: #64748b; font-size: 14px;">{subtitle}</div>
+                </div>
+            """, unsafe_allow_html=True)
+            # hidden button
+            st.markdown('<div style="height:0; overflow:hidden;">', unsafe_allow_html=True)
+            clicked = st.button(title, key=key, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+            return clicked
+
         st.markdown("## 📊 Fleet Status Overview")
-        
         c1, c2, c3 = st.columns(3)
-        
-        # KPI: Healthy
+
         with c1:
-            count = api_data['healthy_count']
-            if st.button(f"🟢 Healthy: {count}", use_container_width=True):
+            if metric_card("✅", "Healthy Equipment", api_data['healthy_count'],
+                           "Operating normally", "#10b981", "#10b981", "btn_healthy"):
                 st.session_state.selected_status = 'Healthy'
-            st.markdown(f"""
-                <div class="metric-card metric-healthy">
-                    <h2 style="margin:0; color:white;">{count}</h2>
-                    <span>Healthy Units (>50 cycles)</span>
-                </div>
-            """, unsafe_allow_html=True)
 
-        # KPI: Warning
         with c2:
-            count = api_data['warning_count']
-            if st.button(f"🟡 Warning: {count}", use_container_width=True):
+            if metric_card("⚠️", "Warning Status", api_data['warning_count'],
+                           "Attention needed", "#f59e0b", "#f59e0b", "btn_warning"):
                 st.session_state.selected_status = 'Warning'
-            st.markdown(f"""
-                <div class="metric-card metric-warning">
-                    <h2 style="margin:0; color:white;">{count}</h2>
-                    <span>Warning Units (<50 cycles)</span>
-                </div>
-            """, unsafe_allow_html=True)
 
-        # KPI: Critical
         with c3:
-            count = api_data['critical_count']
-            if st.button(f"🔴 Critical: {count}", use_container_width=True):
+            if metric_card("🔴", "Critical Alerts", api_data['critical_count'],
+                           "Immediate action required", "#ef4444", "#ef4444", "btn_critical"):
                 st.session_state.selected_status = 'Critical'
-            st.markdown(f"""
-                <div class="metric-card metric-critical">
-                    <h2 style="margin:0; color:white;">{count}</h2>
-                    <span>Critical Units (<30 cycles)</span>
-                </div>
-            """, unsafe_allow_html=True)
+
+        # ← FROM HERE everything is at the else: level, full width
 
         st.markdown("---")
 
@@ -301,17 +371,16 @@ elif st.session_state.current_page == 'dashboard':
 
         # 5. Visualizations
         if not filtered_df.empty:
-            
-            # Interactive Bar Chart
+
             fig = px.bar(
                 filtered_df.sort_values('cycles', ascending=True),
-                x='cycles', 
+                x='cycles',
                 y='id',
                 orientation='h',
                 color='status',
                 color_discrete_map={
-                    'Healthy': '#10b981', 
-                    'Warning': '#f59e0b', 
+                    'Healthy': '#10b981',
+                    'Warning': '#f59e0b',
                     'Critical': '#ef4444'
                 },
                 title="Estimated Remaining Cycles per Unit"
@@ -323,14 +392,10 @@ elif st.session_state.current_page == 'dashboard':
                 yaxis=dict(type='category')
             )
             st.plotly_chart(fig, use_container_width=True)
-            
+
             # Data Table
             st.markdown("### 📋 Detailed Data Registry")
-            
-            # Formatting for display
-            table_df = filtered_df[['id', 'status', 'cycles', 'confidence']].copy()
-            table_df['confidence'] = (table_df['confidence'] * 100).round(1).astype(str) + '%'
-            
+            table_df = filtered_df[['id', 'status', 'cycles']].copy()
             st.dataframe(
                 table_df,
                 use_container_width=True,
@@ -343,12 +408,11 @@ elif st.session_state.current_page == 'dashboard':
                         format="%d",
                         min_value=0,
                         max_value=125,
-                    ),
-                    "confidence": "Model Confidence"
+                    )
                 },
                 hide_index=True
             )
-            
+
             # Download
             csv = table_df.to_csv(index=False).encode('utf-8')
             st.download_button(
@@ -358,6 +422,7 @@ elif st.session_state.current_page == 'dashboard':
                 "text/csv",
                 key='download-csv'
             )
+
         else:
             st.info("No equipment found in this category.")
 

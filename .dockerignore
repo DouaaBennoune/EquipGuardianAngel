@@ -1,0 +1,41 @@
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pycache
+
+# Virtual environment — never copy this into container
+.venv/
+
+# Environment secrets — injected via docker-compose env_file
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Notebooks & experiments — not needed in production
+*.ipynb
+
+# Docker files themselves
+Dockerfile.Backend
+Dockerfile.frontend
+docker-compose.yml
+.dockerignore
+
+# Docs
+README.md
+
+
+
+# CSV data files — not needed inside the container
+*.csv
+*.xlsx
+
+# Workspace files
+*.code-workspace

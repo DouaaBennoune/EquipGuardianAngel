@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api import endpoints
+import uvicorn
 
 def create_app() -> FastAPI:
     application = FastAPI(
@@ -36,5 +37,5 @@ def create_app() -> FastAPI:
 app = create_app()
 
 if __name__ == "__main__":
-    import uvicorn
+    
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

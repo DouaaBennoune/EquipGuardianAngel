@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+streamlit
+numpy
+pandas
+scikit-learn
+plotly
+pydantic
+pydantic-settings
+python-multipart
+requests

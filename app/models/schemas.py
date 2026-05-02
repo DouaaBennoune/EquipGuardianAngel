@@ -6,7 +6,7 @@ class EquipmentPrediction(BaseModel):
     id: str
     status: str
     cycles: float
-    confidence: float
+    
 
 class PredictionResponse(BaseModel):
     """Schema for the aggregated API response"""
