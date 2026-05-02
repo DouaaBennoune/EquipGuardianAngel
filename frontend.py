@@ -430,7 +430,7 @@ elif st.session_state.current_page == 'dashboard':
 
 elif st.session_state.current_page == 'docs':
     st.markdown("## 📖 Documentation")
-    st.info("This interface is connected to a FastAPI backend running a CNN-LSTM Hybrid Model.")
+    st.info("This interface is connected to a FastAPI backend running a RF Model Trained on CMAPSS.")
     
     st.markdown("""
     ### Prediction Logic
