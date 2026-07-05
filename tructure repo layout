@@ -1,0 +1,6 @@
+* [33mc30e4c5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Restructure: added backend and frontend folders for more clean structure
+* [33m4cb79e9[m modified frontend
+* [33m467b9e3[m fix: apply .gitignore correctly, remove tracked junk files
+* [33m35c4126[m initial version of the dockerized app
+* [33m6146352[m initial version of the dockerized app
+* [33mfbb76e6[m first push

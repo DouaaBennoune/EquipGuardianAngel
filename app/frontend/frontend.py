@@ -10,8 +10,11 @@ import plotly.express as px
 from datetime import datetime
 import os
 
+<<<<<<< HEAD:app/frontend/frontend.py
 # ========================= Configuration =========================
 
+=======
+>>>>>>> 08afc9b8d229024a55230628658b682c238c4e0d:frontend.py
 BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://backend:8000/api/v1/predict")
 
 
@@ -130,8 +133,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ========================= Session State =========================
-
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 'home'
 if 'predictions' not in st.session_state:
@@ -139,16 +140,14 @@ if 'predictions' not in st.session_state:
 if 'selected_status' not in st.session_state:
     st.session_state.selected_status = None
 
-# ========================= Logic: Call Backend =========================
-
 def process_csv_via_api(uploaded_file):
     """Sends CSV to FastAPI and gets Real Predictions"""
     try:
-        # CRITICAL: Read file into bytes first (Streamlit reruns invalidate file objects)
+       
         file_bytes = uploaded_file.read()
-        uploaded_file.seek(0)  # Reset for potential re-reads
+        uploaded_file.seek(0) 
         
-        # Send POST request to backend with bytes
+       
         files = {'file': (uploaded_file.name, file_bytes, 'text/csv')}
         response = requests.post(BACKEND_API_URL, files=files)
         
@@ -166,9 +165,8 @@ def process_csv_via_api(uploaded_file):
         st.error(f"❌ An unexpected error occurred: {str(e)}")
         return None
 
-# ========================= Navigation Bar =========================
+# Navigation Bar 
 
-# Wrap the whole nav in a container
 st.markdown('<div class="nav-bar">', unsafe_allow_html=True)
 
 col1, col2, col3, col4, col5 = st.columns([2.5, 1, 1, 1, 1])
@@ -191,10 +189,10 @@ with col5:
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
 
-# ========================= PAGE: HOME =========================
+# PAGE: HOME 
 
 if st.session_state.current_page == 'home':
-    # Hero Section
+    
     st.markdown("""
         <div style="text-align: center; padding: 60px 20px;">
             <p style="font-size: 16px; color: #10a9e8; font-weight: bold; margin-bottom: 10px;">
@@ -256,7 +254,7 @@ if st.session_state.current_page == 'home':
     </div>
     """, unsafe_allow_html=True)
 
-# ========================= PAGE: UPLOAD =========================
+#PAGE: UPLOAD
 
 elif st.session_state.current_page == 'upload':
     st.markdown("## 📤 Upload Sensor Data")
@@ -298,7 +296,7 @@ elif st.session_state.current_page == 'upload':
         """)
         st.markdown("Your data is processed securely and is never stored permanently on our servers.")
 
-# ========================= PAGE: DASHBOARD =========================
+#PAGE: DASHBOARD
 
 elif st.session_state.current_page == 'dashboard':
 
@@ -309,11 +307,11 @@ elif st.session_state.current_page == 'dashboard':
             st.rerun()
 
     else:
-        # 2. Parse Data
+       
         api_data = st.session_state.predictions
         df_pred = pd.DataFrame(api_data['equipment'])
 
-        # 3. KPI Cards
+        
         def metric_card(icon, title, count, subtitle, border_color, number_color, key):
             st.markdown(f"""
                 <div style="
@@ -355,11 +353,10 @@ elif st.session_state.current_page == 'dashboard':
                            "Immediate action required", "#ef4444", "#ef4444", "btn_critical"):
                 st.session_state.selected_status = 'Critical'
 
-        # ← FROM HERE everything is at the else: level, full width
 
         st.markdown("---")
 
-        # 4. Filtering Logic
+        
         filtered_df = df_pred.copy()
         if st.session_state.selected_status:
             filtered_df = df_pred[df_pred['status'] == st.session_state.selected_status]
@@ -368,7 +365,7 @@ elif st.session_state.current_page == 'dashboard':
                 st.session_state.selected_status = None
                 st.rerun()
 
-        # 5. Visualizations
+       
         if not filtered_df.empty:
 
             fig = px.bar(
@@ -425,7 +422,7 @@ elif st.session_state.current_page == 'dashboard':
         else:
             st.info("No equipment found in this category.")
 
-# ========================= PAGE: DOCS =========================
+# PAGE: DOCS
 
 elif st.session_state.current_page == 'docs':
     st.markdown("## 📖 Documentation")
