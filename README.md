@@ -72,7 +72,7 @@ Uses NASA **C-MAPSS** (Commercial Modular Aero-Propulsion System Simulation):
 
 ```bash
 git clone https://github.com/DouaaBennoune/EquipGuardianAngel.git
-cd EquipGuardianAngel
+cd app
 docker-compose up --build
 ```
 
