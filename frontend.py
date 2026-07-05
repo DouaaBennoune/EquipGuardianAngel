@@ -10,7 +10,7 @@ import plotly.express as px
 from datetime import datetime
 import os
 
-API_URL = os.getenv("API_URL", "http://host.docker.internal:8000/api/v1/predict")
+BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://backend:8000/api/v1/predict")
 
 
 st.set_page_config(
