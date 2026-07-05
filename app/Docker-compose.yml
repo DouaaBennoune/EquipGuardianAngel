@@ -1,24 +1,19 @@
-version: "3.9"
-
 services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.Backend
+      dockerfile: backend/Dockerfile.Backend
     container_name: equip-backend
     ports:
       - "8000:8000"
     env_file:
-      - .env
-    volumes:
-      - ./pkls:/app/pkls 
-      - ./app:/app/app
+      - ./backend/.env
    
     restart: always
 
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile.frontend
     container_name: equip-frontend
     ports:
@@ -26,6 +21,6 @@ services:
     depends_on:
       - backend
     volumes:
-      - .:/app
+      - ./frontend:/app 
   
     restart: always

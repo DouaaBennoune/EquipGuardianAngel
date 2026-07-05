@@ -4,7 +4,7 @@ from typing import List, Dict
 import joblib
 import numpy as np
 from dotenv import load_dotenv
-from app.core.config import logger
+from backend.core.config import logger
 
 load_dotenv()
 

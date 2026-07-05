@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.api import endpoints
+from backend.core.config import settings
+from backend.api import endpoints
 import uvicorn
 
 def create_app() -> FastAPI:
